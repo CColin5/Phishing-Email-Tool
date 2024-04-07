@@ -1,5 +1,7 @@
 #These are imports from https://www.youtube.com/watch?v=7E3NNxeXiys
 #import: pip install --upgrade google-api-python-client google-auth-httplib2 google-auth-oauthlib
+#If imports are not working ctrl+shift+p --> slect python interpeter. and pick a version that will resolve errors
+
 import os.path
 
 from google.auth.transport.requests import Request
