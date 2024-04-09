@@ -3,31 +3,15 @@
 #If imports are not working ctrl+shift+p --> slect python interpeter. and pick a version that will resolve errors
 #pip install openai
 
-import os.path
-
-from google.auth.transport.requests import Request
-from google.oauth2.credentials import Credentials
-from google_auth_oauthlib.flow import InstalledAppFlow
-from googleapiclient.discovery import build
-from googleapiclient.errors import HttpError
-import os.path
-import base64
-import email
-
-SCOPES = ['https://www.googleapis.com/auth/gmail.readonly']
-
-
 import tkinter
 import customtkinter
-#from loginProcess import LoginProcess
-#import imaplib, email
 from email.header import decode_header
 import os
 import webbrowser
+from tkinter import PhotoImage
 
-
-
-
+from email_processor import EmailProcessor
+email_processor = EmailProcessor()
 
 
 """
@@ -62,14 +46,25 @@ def login_To_Account_Page():
     title.pack(padx=10, pady=10)
 
     #Log in button that sends the user's emails and processes them
-    login = customtkinter.CTkButton(app, text="Login to Gmail", command=lambda: myEmails())
+    login = customtkinter.CTkButton(app, text="Login to Gmail", command=lambda: auth_and_loading_data())
     login.pack(padx=10, pady=100)
+
+
+#This method is for loading data and determining if the user should be logged in    
+def auth_and_loading_data():
+    email_processor.auth_and_load_emails()
+    if os.path.exists('token.json'):
+        email_page(0)
+    else:
+        login_To_Account_Page()
+
 
 
 # a logout button that will delete the user's token
 def logout_method():
     clear_window()
     try:
+        email_processor.clear_data()
         os.remove('token.json')
     except Exception as e:
         print(e)
@@ -82,12 +77,22 @@ def logout_method():
 def email_page(number_for_pagnation):
     clear_window()
     
+
+    subject = email_processor.get_subject()
+    
+    sender = email_processor.get_sender()
+    
+    body = email_processor.get_body()
+    
+    userAccount = email_processor.get_userAccount()
+
+   
     logout_frame = customtkinter.CTkFrame(app)
     logout_frame.pack(fill='x', padx=10, pady=5)
 
     account_label = customtkinter.CTkLabel(logout_frame, text="Account: " + userAccount, fg_color="black")
     account_label.pack(side="left", padx=10)
-    print(userAccount)
+    
 
 
     # The user can log out here
@@ -106,7 +111,7 @@ def email_page(number_for_pagnation):
 
     #creates a frame of labels for to organize which email is which.
     for i in range(number_for_pagnation*10, number_for_pagnation*10 + email_amount_number):
-        print(body[i])
+        # print(body[i])
         # Create a frame for each email
         email_frame = customtkinter.CTkFrame(app)
         email_frame.pack(fill='x', padx=10, pady=5)
@@ -119,12 +124,24 @@ def email_page(number_for_pagnation):
         email_button = customtkinter.CTkButton(email_frame, text="Open and Scan", command=lambda i=i: email_action(i))
         email_button.pack(side="right", padx=10)
 
-        print(userAccount + "AHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+        
 
 
 #here is the evaluation of the email scan (work in progress)
 def email_action(email_num):
     clear_window()
+
+
+    subject = email_processor.get_subject()
+    
+    sender = email_processor.get_sender()
+    
+    body = email_processor.get_body()
+    
+    userAccount = email_processor.get_userAccount()
+
+
+
     email_frame = customtkinter.CTkFrame(app)
     email_frame.pack(fill='x', padx=10, pady=5)
 
@@ -139,89 +156,11 @@ def email_action(email_num):
 
 
 
-
-
-
-
-
-
-# This is from the youtube video #1
-#This is for authenticating the user
-
-#This is for storing the user information
-subject = []
-sender = []
-body = []
-userAccount = ''
-
-#This is for authenticating the user and for grabbing data
-def myEmails():
-
-    # cancel_button = customtkinter.CTkButton(app, text="Cancel", command=logout_method)
-    # cancel_button.pack(pady=10)  # Adjust layout parameters as necessary
-
-    creds=None
-    #if the user is authenticated then skip to storing data
-    if os.path.exists('token.json'):
-        creds = Credentials.from_authorized_user_file('token.json', SCOPES)
-        
-    # if the user is not authenticated then get the user to login and store the user's authentication token
-    if not creds or not creds.valid:
-        if creds and creds.expired and creds.refresh_token:
-            creds.refresh(Request())
-        else:
-            flow = InstalledAppFlow.from_client_secrets_file(
-                'config/credentials.json', SCOPES)
-            
-            creds = flow.run_local_server(port=0)
-        # Save the credentials for the next run
-        with open('token.json', 'w') as token:
-            token.write(creds.to_json())
-
-    #This is for grabbing the user's emails
-    try:
-        service = build('gmail', 'v1', credentials = creds)
-        result = service.users().messages().list(userId='me').execute()
-        messages = result.get('messages')
-        for i in messages:
-            txt = service.users().messages().get(userId='me', id=i['id']).execute()
-            payload = txt['payload']
-            headers = payload['headers']
-            for i in headers:
-                print(i)
-                if i['name'] == 'To':
-                    userAccount = (i['value'])
-                    print(i['value'] + "__________________________________")
-                    print(userAccount+"AHHHHHHHHHHHHHHHHH")
-                if i['name'] == 'Subject':
-                    subject.append(i['value'])
-                if i['name'] == 'From':
-                    sender.append(i['value'])
-                parts = payload.get('parts')[0]
-                data = parts['body']['data']
-                data = data.replace('-', '+').replace('_','/')
-                decode_data = base64.b64decode(data)
-                
-                #This allows us to print out the decoded data (converts to string)
-                body.append(decode_data.decode('utf-8'))
-        email_page(0)
-    except HttpError as error:
-        print('An error occurred: (error)')
-    except Exception as e:
-        print(e)
-
-
-
-
-
-
-
 #sytem settings (grabs light mode or dark mode)
 customtkinter.set_appearance_mode("System")
 
 #set the default color theme
 customtkinter.set_default_color_theme("blue")
-
 
 #Our app frame (size, title, etc)
 app = customtkinter.CTk()
@@ -230,43 +169,6 @@ app.title("Phishing Email Detector")
 
 #adds an image to the app
 app.iconbitmap("images/PhishingDetector.ico")
-
-'''
-Dont need these anymore, because I have 2Auth
-#region This Section Is for Gathering the user's Gmail
-#adding UI Elements
-title = customtkinter.CTkLabel(app, text="Please type in your gmail")
-title.pack(padx=10, pady=10)
-
-#link input Section
-#this gets the input -- This is a usable variable------
-gmail_var = tkinter.StringVar()
-
-#this is where the user types in information
-link = customtkinter.CTkEntry(app, width=350, height=40, textvariable=gmail_var)
-link.pack(padx=10, pady=10)
-
-#endregion
-
-#region This Section Is for Gathering the user's Password
-#adding UI Elements
-title = customtkinter.CTkLabel(app, text="Password")
-title.pack(padx=10, pady=10)
-
-#link input Section
-#this gets the input -- This is a usable variable------
-password_var = tkinter.StringVar()
-
-#this is where the user types in information
-link = customtkinter.CTkEntry(app, width=350, height=40, textvariable=password_var)
-link.pack(padx=10, pady=10)
-#endregion
-'''
-
-
-
-
-
 
 #Initialized login page
 login_To_Account_Page()
