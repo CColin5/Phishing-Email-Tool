@@ -66,21 +66,20 @@ class EmailProcessor:
                 txt = service.users().messages().get(userId='me', id=i['id']).execute()
                 payload = txt['payload']
                 headers = payload['headers']
-                for i in headers:
-                    
+                for i in headers:  
                     if i['name'] == 'To':
                         self.userAccount = (i['value'])
                     if i['name'] == 'Subject':
                         self.subject.append(i['value'])
                     if i['name'] == 'From':
                         self.sender.append(i['value'])
-                    parts = payload.get('parts')[0]
-                    data = parts['body']['data']
-                    data = data.replace('-', '+').replace('_','/')
-                    decode_data = base64.b64decode(data)
-                    
-                    #This allows us to print out the decoded data (converts to string)
-                    self.body.append(decode_data.decode('utf-8'))
+                parts = payload.get('parts')[0]
+                data = parts['body']['data']
+                data = data.replace('-', '+').replace('_','/')
+                decode_data = base64.b64decode(data)
+                
+                #This allows us to print out the decoded data (converts to string)
+                self.body.append(decode_data.decode('utf-8'))
             # email_page(0)
         except HttpError as error:
             print('An error occurred: (error)')
