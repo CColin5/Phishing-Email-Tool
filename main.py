@@ -16,6 +16,12 @@ from email_processor import EmailProcessor
 
 email_processor = EmailProcessor()
 
+"""
+Yo, this can be used for getting in other email folders, for more
+information, look at the top of the comments in email_proccessor class
+"""
+spam_processor = EmailProcessor("SPAM")
+
 
 """
 Youtube videos used
