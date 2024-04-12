@@ -1,0 +1,4 @@
+.gitignore
+config/credentials.json
+token.json
+__pycache__/

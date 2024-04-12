@@ -10,7 +10,10 @@ import os
 import webbrowser
 from tkinter import PhotoImage
 
+from components.email_list import EmailList
+from components.email_view import EmailView
 from email_processor import EmailProcessor
+
 email_processor = EmailProcessor()
 
 
@@ -73,87 +76,56 @@ def logout_method():
 
 
 #Displays Emails to scan, only displays up to 10 emails.  
-#The number arguments is for the pagnation for the page
-def email_page(number_for_pagnation):
+#The number arguments is for the pagination for the page
+def email_page(number_for_pagination):
     clear_window()
     
-
+    # get email info
     subject = email_processor.get_subject()
-    
     sender = email_processor.get_sender()
-    
     body = email_processor.get_body()
-    
     userAccount = email_processor.get_userAccount()
-
    
+    # define logout bar
     logout_frame = customtkinter.CTkFrame(app)
     logout_frame.pack(fill='x', padx=10, pady=5)
-
-    account_label = customtkinter.CTkLabel(logout_frame, text="Account: " + userAccount, fg_color="black")
+    account_label = customtkinter.CTkLabel(logout_frame, text="Account: " + userAccount)
     account_label.pack(side="left", padx=10)
-    
-
-
-    # The user can log out here
     logout = customtkinter.CTkButton(logout_frame, text="Logout of Gmail", command= logout_method)
-    logout.pack(padx=10, pady=10)
+    logout.pack(side = "right", padx=10, pady=10)
 
-    # this gets the amount of emails that will desplay per page. Example: if there are 7 emails, only 7 will be desplayed. More than ten emails will result in only 10 emails being displayed
-    if ((len(subject)- number_for_pagnation*10) > 10):
-        email_amount_number = 10
 
-        #create a next button to display the next 10 emails
+    email_header_data = list(zip(sender, subject)) # data to send to EmailList component (thumbnail-type quick list of emails)
+    email_list = EmailList(app, emails = email_header_data, fg_color="transparent") 
+    email_list.pack(side="left", padx=10)
 
-    else:
-        #this will display the remaining emails
-        email_amount_number = len(subject)%10 
+    global email_frame # container frame for specific email user is viewing
+    email_frame = customtkinter.CTkFrame(app, fg_color="transparent")
+    email_frame.pack(side="left", padx=10)
 
-    #creates a frame of labels for to organize which email is which.
-    for i in range(number_for_pagnation*10, number_for_pagnation*10 + email_amount_number):
-        # print(body[i])
-        # Create a frame for each email
-        email_frame = customtkinter.CTkFrame(app)
-        email_frame.pack(fill='x', padx=10, pady=5)
-        
-        # Label for the email
-        email_label = customtkinter.CTkLabel(email_frame, text="Sender: " + sender[i] + " \nSubject: " + subject[i], fg_color="black")
-        email_label.pack(side="left", padx=10)
-        
-        # Button for the email
-        email_button = customtkinter.CTkButton(email_frame, text="Open and Scan", command=lambda i=i: email_action(i))
-        email_button.pack(side="right", padx=10)
+    scan_button = customtkinter.CTkButton(email_frame, text="Scan email", command=lambda: email_action(email_list.get_selected())) # scan_button calls email_action, which currently pulls email info and displays is in email_viewer
+    scan_button.pack(side="bottom", padx=10)
 
-        
+    global email_viewer
+    email_viewer = customtkinter.CTkFrame(email_frame, width = 300, border_color="gray10", border_width=2, fg_color="transparent", height = 270)
+    email_viewer.pack(side="left", padx=10, pady=5)
 
 
 #here is the evaluation of the email scan (work in progress)
 def email_action(email_num):
-    clear_window()
-
 
     subject = email_processor.get_subject()
-    
-    sender = email_processor.get_sender()
-    
-    body = email_processor.get_body()
-    
+    sender = email_processor.get_sender()   
+    body = email_processor.get_body()    
     userAccount = email_processor.get_userAccount()
 
+    email_data = {'subject' : subject[email_num], 'sender' : sender[email_num], 'body' : body[email_num], 'user' : userAccount[email_num]}
 
-
-    email_frame = customtkinter.CTkFrame(app)
-    email_frame.pack(fill='x', padx=10, pady=5)
-
-    # Label for the email
-    email_label = customtkinter.CTkLabel(email_frame, text="Sender: " + sender[email_num] + " \nSubject: " + subject[email_num], fg_color="black")
-    email_label.pack(side="left", padx=10)
-
-    body_label = customtkinter.CTkLabel(email_frame, text="Body: " + body[email_num], fg_color="black")
-    body_label.pack(side="left", padx=10)
-        
-
-
+    global email_viewer
+    email_viewer.pack_forget() # remove previous email_viewer pane (displaying previous email)
+    global email_frame
+    email_viewer = EmailView(email_frame, email = email_data, width = 300, border_color="gray10", border_width=2, fg_color="transparent", height = 270) # create new email_viewer pane (displaying current email)
+    email_viewer.pack(side="left", padx=10, pady=5)
 
 
 #sytem settings (grabs light mode or dark mode)
