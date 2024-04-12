@@ -21,11 +21,15 @@ SCOPES = ['https://www.googleapis.com/auth/gmail.readonly']
 
 
 class EmailProcessor:
-    def __init__(self):
+    
+    #Default will grabs all emails from the users inbox except "SPAM" or "TRASH"
+    #To Access Spam or trash Emails, apply "SPAM" or "TRASH" as an argument to the constructor
+    def __init__(self, EmailBox=''):
         self.userAccount = ''
         self.subject = []
         self.sender = []
         self.body = []
+        self.EmailBox = EmailBox
         # Initialize any other properties you need
 
     def clear_data(self):
@@ -60,7 +64,10 @@ class EmailProcessor:
         #This is for grabbing the user's emails
         try:
             service = build('gmail', 'v1', credentials = creds)
-            result = service.users().messages().list(userId='me').execute()
+            if (self.EmailBox == ''):
+                result = service.users().messages().list(userId='me').execute()
+            else:
+                result = service.users().messages().list(userId='me', labelIds=[self.EmailBox]).execute()
             messages = result.get('messages')
             for i in messages:
                 txt = service.users().messages().get(userId='me', id=i['id']).execute()
