@@ -92,6 +92,35 @@ def email_page(number_for_pagination):
     body = email_processor.get_body()
     userAccount = email_processor.get_userAccount()
    
+    '''
+    Delete this comment later:
+    Hey Audry,
+
+    Can you make the buttons maybe like radio buttons, this way it can be organized like this:
+
+    if (Emailbutton clicked):
+        subject = email_processor.get_subject()
+        sender = email_processor.get_sender()
+        body = email_processor.get_body()
+        userAccount = email_processor.get_userAccount()
+    if (Spambutton clicked):
+        subject = spam_processor.get_subject()
+        sender = spam_processor.get_sender()
+        body = spam_processor.get_body()
+        userAccount = email_processor.get_userAccount()
+    if (TrashButton clicked):
+        subject = trash_processor.get_subject()
+        sender = trash_processor.get_sender()
+        body = trash_processor.get_body()
+        userAccount = email_processor.get_userAccount()
+
+    This way we wont have to re-write all the code (hopefully)
+
+    '''
+
+
+
+
     # define logout bar
     logout_frame = customtkinter.CTkFrame(app)
     logout_frame.pack(fill='x', padx=10, pady=5)
