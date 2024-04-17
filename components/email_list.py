@@ -6,7 +6,7 @@ class EmailList(customtkinter.CTkFrame):
     '''
     EmailList component provides email selection and email list viewing functionality
     '''
-    def __init__(self, master, emails:list, **kwargs):
+    def __init__(self, master, emails:list, on_click, **kwargs):
         '''
         emails is zipped list of sender &
         '''
@@ -34,7 +34,7 @@ class EmailList(customtkinter.CTkFrame):
                 self.page.pack_forget() # remove page element from frame
             except AttributeError: # error is thrown when we try to forget page element before it has been initialized
                 pass
-            self.page = ScrollEmailList(self, email_data, width=300, height=200, corner_radius=0, fg_color="transparent")
+            self.page = ScrollEmailList(self, email_data, on_click, width=300, height=200, corner_radius=0, fg_color="transparent")
             self.page.pack(fill='x', padx=10, pady=5)
         
         dropdown = customtkinter.CTkFrame(self, fg_color="transparent")

@@ -131,7 +131,7 @@ def email_page(number_for_pagination):
 
 
     email_header_data = list(zip(sender, subject)) # data to send to EmailList component (thumbnail-type quick list of emails)
-    email_list = EmailList(app, emails = email_header_data, fg_color="transparent") 
+    email_list = EmailList(app, emails = email_header_data, on_click = email_action, fg_color="transparent") 
     email_list.pack(side="left", padx=10)
 
     global email_frame # container frame for specific email user is viewing
