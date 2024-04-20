@@ -13,7 +13,7 @@ from tkinter import PhotoImage
 from components.email_list import EmailList
 from components.email_view import EmailView
 from email_processor import EmailProcessor
-
+from generativeAI_window import generativeAIWindow
 email_processor = EmailProcessor()
 
 """
@@ -148,7 +148,7 @@ def email_page(number_for_pagination):
 
 #here is the evaluation of the email scan (work in progress)
 def email_action(email_num):
-
+    
     subject = email_processor.get_subject()
     sender = email_processor.get_sender()   
     body = email_processor.get_body()    
@@ -156,11 +156,14 @@ def email_action(email_num):
 
     email_data = {'subject' : subject[email_num], 'sender' : sender[email_num], 'body' : body[email_num], 'user' : userAccount[email_num]}
 
+    
+    
     global email_viewer
     email_viewer.pack_forget() # remove previous email_viewer pane (displaying previous email)
     global email_frame
     email_viewer = EmailView(email_frame, email = email_data, width = 300, border_color="gray10", border_width=2, fg_color="transparent", height = 270) # create new email_viewer pane (displaying current email)
     email_viewer.pack(side="left", padx=10, pady=5)
+    generativeAIWindow(email_data)
 
 
 #sytem settings (grabs light mode or dark mode)
