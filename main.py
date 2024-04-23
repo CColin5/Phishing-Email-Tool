@@ -84,7 +84,7 @@ def email_page(inbox: int):
     logout.pack(side = "right", padx=10, pady=10)
 
     inbox_select = customtkinter.CTkFrame(app)
-    inbox_select.pack(side = "top")
+    inbox_select.pack(side = "top", padx=10, pady=10)
     selected_inbox = customtkinter.IntVar(inbox_select, value = inbox)
 
     def inbox_filter():
@@ -105,11 +105,11 @@ def email_page(inbox: int):
     main_button = customtkinter.CTkRadioButton(inbox_select, variable = selected_inbox, value = 0, command = inbox_filter, text = "Main")
     spam_button = customtkinter.CTkRadioButton(inbox_select, variable = selected_inbox, value = 1, command = inbox_filter, text = "Spam")
     trash_button = customtkinter.CTkRadioButton(inbox_select, variable = selected_inbox, value = 2, command = inbox_filter, text = "Trash")
-    main_button.pack(side="left")
-    spam_button.pack(side="left")
-    trash_button.pack(side="left")
+    main_button.pack(side="left", padx=5, pady=10)
+    spam_button.pack(side="left", padx=5, pady=10)
+    trash_button.pack(side="left", padx=5, pady=10)
     
-    email_list = EmailList(app, emails = list(zip(sender, subject)), on_click = email_action, fg_color="transparent") 
+    email_list = EmailList(app, emails = list(zip(sender, subject)), on_click = view_email, fg_color="transparent") 
     email_list.pack(side="left", padx=10)
 
     global email_frame # container frame for specific email user is viewing
@@ -123,10 +123,7 @@ def email_page(inbox: int):
     email_viewer = customtkinter.CTkFrame(email_frame, width = 300, border_color="gray10", border_width=2, fg_color="transparent", height = 270)
     email_viewer.pack(side="left", padx=10, pady=5)
 
-
-# here is the evaluation of the email scan (work in progress)
-def email_action(email_num):
-
+def view_email(email_num):
     subject = email_processor.get_subject()
     sender = email_processor.get_sender()   
     body = email_processor.get_body()    
@@ -139,6 +136,13 @@ def email_action(email_num):
     email_viewer = EmailView(email_frame, email = email_data, width = 300, border_color="gray10", border_width=2, fg_color="transparent", height = 270) # create new email_viewer pane (displaying current email)
     email_viewer.pack(side="left", padx=10, pady=5)
 
+
+def email_action(email_num):
+    '''
+    function for scanning email
+    '''
+    pass
+    
 
 #sytem settings (grabs light mode or dark mode)
 customtkinter.set_appearance_mode("System")
