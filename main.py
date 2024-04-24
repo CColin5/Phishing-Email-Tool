@@ -39,7 +39,7 @@ def login_To_Account_Page():
     #clears the window
     clear_window()
     #uses customtkinter to create a label
-    title = customtkinter.CTkLabel(app, text="Welcome to Phishing Detector")
+    title = customtkinter.CTkLabel(app, text="Welcome to Phishing Detector", font = ("arial", 20))
     title.pack(padx=10, pady=10)
     #Log in button that sends the user's emails and processes them
     login = customtkinter.CTkButton(app, text="Login to Gmail", command=lambda: auth_and_loading_data())
@@ -139,14 +139,20 @@ def view_email(email_num):
     email_viewer.pack_forget() # remove previous email_viewer pane (displaying previous email)
     email_viewer = EmailView(email_frame, email = email_data, width = 300, border_color="gray10", border_width=2, fg_color="transparent", height = 270) # create new email_viewer pane (displaying current email)
     email_viewer.pack(side="left", padx=10, pady=5)
-    generativeAIWindow(email_data)
 
 
 def email_action(email_num):
     '''
     function for scanning email
     '''
-    pass
+    subject = email_processor.get_subject()
+    sender = email_processor.get_sender()   
+    body = email_processor.get_body()    
+    userAccount = email_processor.get_userAccount()
+
+    email_data = {'subject' : subject[email_num], 'sender' : sender[email_num], 'body' : body[email_num], 'user' : userAccount[email_num]}
+
+    generativeAIWindow(email_data)
     
 
 #sytem settings (grabs light mode or dark mode)
