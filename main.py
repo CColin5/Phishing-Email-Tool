@@ -14,6 +14,9 @@ from components.email_list import EmailList
 from components.email_view import EmailView
 from email_processor import EmailProcessor
 
+from generativeAI_window import generativeAIWindow
+email_processor = EmailProcessor()
+
 """
 Youtube videos used
 1. https://www.youtube.com/watch?v=7E3NNxeXiys - this is about using python to read emails
@@ -132,9 +135,11 @@ def view_email(email_num):
     email_data = {'subject' : subject[email_num], 'sender' : sender[email_num], 'body' : body[email_num], 'user' : userAccount[email_num]}
 
     global email_viewer, email_frame
+
     email_viewer.pack_forget() # remove previous email_viewer pane (displaying previous email)
     email_viewer = EmailView(email_frame, email = email_data, width = 300, border_color="gray10", border_width=2, fg_color="transparent", height = 270) # create new email_viewer pane (displaying current email)
     email_viewer.pack(side="left", padx=10, pady=5)
+    generativeAIWindow(email_data)
 
 
 def email_action(email_num):
