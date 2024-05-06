@@ -34,7 +34,7 @@ class EmailList(customtkinter.CTkFrame):
                 self.page.pack_forget() # remove page element from frame
             except AttributeError: # error is thrown when we try to forget page element before it has been initialized
                 pass
-            self.page = ScrollEmailList(self, email_data, on_click, width=300, height=200, corner_radius=0, fg_color="transparent")
+            self.page = ScrollEmailList(self, email_data, on_click, start_index = start_index, width=300, height=200, corner_radius=0, fg_color="transparent")
             self.page.pack(fill='x', padx=10, pady=5)
         
         dropdown = customtkinter.CTkFrame(self, fg_color="transparent")
@@ -57,7 +57,7 @@ class EmailList(customtkinter.CTkFrame):
             called when user clicks "next" to go to next page
             '''
             new = self.page_being_viewed + 1
-            max_page = len(emails)//(new*self.emails_per_page) + 1
+            max_page = len(emails)//(self.emails_per_page)
             self.page_being_viewed = max_page if new > max_page else new
             reload_list()
 
