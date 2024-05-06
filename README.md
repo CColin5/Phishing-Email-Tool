@@ -1,8 +1,4 @@
-phishing email tool  
-
-## Prerequisites
-
-- Modern version of [python](https://www.python.org/) (3.11+)
+# Generative AI Phishing Email Detection Application
 
 ## Preparing environment
 
