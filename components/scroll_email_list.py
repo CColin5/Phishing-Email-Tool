@@ -4,9 +4,10 @@ class ScrollEmailList(customtkinter.CTkScrollableFrame):
     '''
     child component of EmailList, provides scrollable pane of user-defined number of emails
     '''
-    def __init__(self, master, emails: list, on_click, **kwargs):
+    def __init__(self, master, emails: list, on_click, start_index:int, **kwargs):
         super().__init__(master, **kwargs)
 
+        self.start_index = start_index
         self.on_click = on_click
         self.selected_index = 0
         self.checkboxes = [] # stores the CTkCheckBox objects for each email (so checked/unchecked state can be updated later)
@@ -30,7 +31,7 @@ class ScrollEmailList(customtkinter.CTkScrollableFrame):
         self.checkboxes[self.selected_index].deselect() # deselect previously selected index
         self.selected_index = n
         self.checkboxes[n].select()
-        self.on_click(n)
+        self.on_click(self.start_index + n)
         
     def get_selected_index(self) -> int:
         return self.selected_index

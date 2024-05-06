@@ -15,7 +15,6 @@ from components.email_view import EmailView
 from email_processor import EmailProcessor
 
 from generativeAI_window import generativeAIWindow
-email_processor = EmailProcessor()
 
 """
 Youtube videos used
@@ -24,7 +23,7 @@ Youtube videos used
 
 """
 
-email_processor = EmailProcessor()
+email_processor = EmailProcessor("INBOX")
 
 #Methods that create pages:
 
@@ -67,7 +66,7 @@ def email_page(inbox: int):
     '''
     Displays emails in inbox
     inbox argument is an integer (0, 1, or 2) representing which inbox is being scanned
-        0 : main
+        0 : inbox
         1 : spam
         2 : trash
     '''
@@ -101,14 +100,14 @@ def email_page(inbox: int):
             case 2:
                 email_processor = EmailProcessor("TRASH")
             case _:
-                email_processor = EmailProcessor()
+                email_processor = EmailProcessor("INBOX")
         auth_and_loading_data()
         email_page(selected_inbox.get())
     
-    main_button = customtkinter.CTkRadioButton(inbox_select, variable = selected_inbox, value = 0, command = inbox_filter, text = "Main")
+    inbox_button = customtkinter.CTkRadioButton(inbox_select, variable = selected_inbox, value = 0, command = inbox_filter, text = "Inbox")
     spam_button = customtkinter.CTkRadioButton(inbox_select, variable = selected_inbox, value = 1, command = inbox_filter, text = "Spam")
     trash_button = customtkinter.CTkRadioButton(inbox_select, variable = selected_inbox, value = 2, command = inbox_filter, text = "Trash")
-    main_button.pack(side="left", padx=5, pady=10)
+    inbox_button.pack(side="left", padx=5, pady=10)
     spam_button.pack(side="left", padx=5, pady=10)
     trash_button.pack(side="left", padx=5, pady=10)
     
@@ -132,7 +131,7 @@ def view_email(email_num):
     body = email_processor.get_body()    
     userAccount = email_processor.get_userAccount()
 
-    email_data = {'subject' : subject[email_num], 'sender' : sender[email_num], 'body' : body[email_num], 'user' : userAccount[email_num]}
+    email_data = {'subject' : subject[email_num], 'sender' : sender[email_num], 'body' : body[email_num], 'user' : userAccount[0]}
 
     global email_viewer, email_frame
 
@@ -150,7 +149,7 @@ def email_action(email_num):
     body = email_processor.get_body()    
     userAccount = email_processor.get_userAccount()
 
-    email_data = {'subject' : subject[email_num], 'sender' : sender[email_num], 'body' : body[email_num], 'user' : userAccount[email_num]}
+    email_data = {'subject' : subject[email_num], 'sender' : sender[email_num], 'body' : body[email_num][:16000], 'user' : userAccount[email_num]} # body cannot exceed 16,385 tokens
 
     generativeAIWindow(email_data)
     

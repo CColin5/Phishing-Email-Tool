@@ -1,7 +1,5 @@
 import customtkinter
 
-from components.scroll_email_list import ScrollEmailList
-
 class EmailView(customtkinter.CTkScrollableFrame):
     '''
     component to display any email information. Currently displays sender, subject, and body. Could use some TLC in the beauty department, a bit hideous at the moment

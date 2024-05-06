@@ -10,15 +10,7 @@ import email
 
 SCOPES = ['https://www.googleapis.com/auth/gmail.readonly']
 
-
 # This is from the youtube video #1
-#This is for authenticating the user
-
-#This is for storing the user information
-
-
-#This is for authenticating the user and for grabbing data
-
 
 class EmailProcessor:
     
@@ -40,8 +32,6 @@ class EmailProcessor:
         self.body = []
 
     def auth_and_load_emails(self):
-            # cancel_button = customtkinter.CTkButton(app, text="Cancel", command=logout_method)
-        # cancel_button.pack(pady=10)  # Adjust layout parameters as necessary
 
         creds=None
         #if the user is authenticated then skip to storing data
@@ -80,18 +70,22 @@ class EmailProcessor:
                         self.subject.append(i['value'])
                     if i['name'] == 'From':
                         self.sender.append(i['value'])
-                parts = payload.get('parts')[0]
-                data = parts['body']['data']
-                data = data.replace('-', '+').replace('_','/')
-                decode_data = base64.b64decode(data)
-                
-                #This allows us to print out the decoded data (converts to string)
-                self.body.append(decode_data.decode('utf-8'))
-            # email_page(0)
+                parts = payload.get('parts')
+                if parts: # eliminates TypeError when trying to access index 0 of NoneType
+                    parts = parts[0]
+                    data = parts.get('body', {}).get('data')
+                    if data: # eliminates KeyError when 'data' doesn't exist
+                        data = data.replace('-', '+').replace('_', '/')
+                        decode_data = base64.b64decode(data)
+                        #This allows us to print out the decoded data (converts to string)
+                        self.body.append(decode_data.decode('utf-8'))
+                    else:
+                        self.body.append('no body')
+                else:
+                    self.body.append('no body')
+
         except HttpError as error:
             print('An error occurred: (error)')
-        except Exception as e:
-            print(e)
 
     def get_userAccount(self):
         return self.userAccount
